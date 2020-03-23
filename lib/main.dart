@@ -59,11 +59,24 @@ class RandomWordsState extends State<RandomWords> {
             appBar: AppBar(
               title: Text('Saved Suggestions'),
             ),
-            body: ListView(children: divided),
+            body: _buildSavedList(tiles),
           );
         },
       ),
     );
+  }
+
+  Widget _buildSavedList(Iterable<ListTile> tiles) {
+    return ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemBuilder: (context, i) {
+          if (i.isOdd) return Divider();
+
+          final index = i ~/ 2;
+          if (index >= tiles.length) return null;
+
+          return ListTile(title: tiles.elementAt(index));
+        });
   }
 
   Widget _buildSuggestions() {
