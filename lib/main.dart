@@ -1,124 +1,86 @@
-// Copyright 2018 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'package:flutter/material.dart';
-import 'package:english_words/english_words.dart';
+import 'package:startup_namer/random_word_page.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(materialAppContainer());
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Startup Name Generator',
-        theme: ThemeData(
-          primaryColor: Colors.blueGrey,
-        ),
-        home: RandomWords());
-  }
+Widget materialAppContainer() {
+  // Make wrapper for ui testing.
+  return MaterialApp(
+      title: 'Flutter Sample App',
+      theme: ThemeData(
+        primaryColor: Colors.blueGrey,
+      ),
+      home: AppPage());
 }
 
-class RandomWordsState extends State<RandomWords> {
-  final List<WordPair> _suggestions = <WordPair>[];
-  final Set<WordPair> _saved = Set<WordPair>();
-  final TextStyle _biggerFont = TextStyle(fontSize: 18.0);
+class AppPage extends StatefulWidget {
+  // Make it stateful for handling appbar title and content page.
+  @override
+  _AppPageState createState() => _AppPageState();
+}
+
+class _AppPageState extends State<AppPage> {
+  String _title = 'Flutter Example App';
+  int _drawerPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Startup Name Generator'),
-        actions: <Widget>[
-          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved)
-        ],
+        title: Text(_title),
       ),
-      body: _buildSuggestions(),
-    );
-  }
-
-  void _pushSaved() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          final Iterable<ListTile> tiles = _saved.map(
-            (WordPair pair) {
-              return ListTile(
-                title: Text(
-                  pair.asPascalCase,
-                  style: _biggerFont,
-                ),
-              );
-            },
-          );
-          final List<Widget> divided = ListTile.divideTiles(
-            context: context,
-            tiles: tiles,
-          ).toList();
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Saved Suggestions'),
+      drawer: Drawer(
+        child: ListView(
+          children: <Widget>[
+            DrawerHeader(
+              child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Text('butyear@gmail.com')),
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [Colors.blueGrey, Colors.blueGrey[200]])),
             ),
-            body: _buildSavedList(tiles),
-          );
-        },
+            ListTile(
+              title: Text('Home'),
+              trailing: Icon(Icons.home),
+              onTap: () {
+                Navigator.pop(context);
+                setState(() {
+                  _title = 'Flutter Example App';
+                  _drawerPageIndex = 0;
+                });
+              },
+            ),
+            ListTile(
+              title: Text('Random Words'),
+              trailing: Icon(Icons.low_priority),
+              onTap: () {
+                Navigator.pop(context);
+                setState(() {
+                  _title = 'Random Name Generator';
+                  _drawerPageIndex = 1;
+                });
+              },
+            ),
+            ListTile(),
+            ListTile(),
+            ListTile(),
+          ],
+        ),
       ),
+      body: drawerPageRouter(),
     );
   }
 
-  Widget _buildSavedList(Iterable<ListTile> tiles) {
-    return ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder: (context, i) {
-          if (i.isOdd) return Divider();
-
-          final index = i ~/ 2;
-          if (index >= tiles.length) return null;
-
-          return ListTile(title: tiles.elementAt(index));
-        });
+  Widget drawerPageRouter() {
+    if (_drawerPageIndex == 0) {
+      return firstPage();
+    } else {
+      return RandomWords();
+    }
   }
 
-  Widget _buildSuggestions() {
-    return ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder: (context, i) {
-          if (i.isOdd) return Divider();
-
-          final index = i ~/ 2;
-          if (index >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs().take(10));
-          }
-          return _buildRow(_suggestions[index]);
-        });
+  Widget firstPage() {
+    return Center(child: Text('This is a sample app for practice'));
   }
-
-  Widget _buildRow(WordPair pair) {
-    final bool alreadySaved = _saved.contains(pair);
-
-    return ListTile(
-      title: Text(
-        pair.asPascalCase,
-        style: _biggerFont,
-      ),
-      trailing: Icon(
-        alreadySaved ? Icons.favorite : Icons.favorite_border,
-        color: alreadySaved ? Colors.red : null,
-      ),
-      onTap: () {
-        setState(() {
-          if (alreadySaved) {
-            _saved.remove(pair);
-          } else {
-            _saved.add(pair);
-          }
-        });
-      },
-    );
-  }
-}
-
-class RandomWords extends StatefulWidget {
-  @override
-  RandomWordsState createState() => RandomWordsState();
 }
