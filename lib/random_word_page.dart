@@ -100,32 +100,51 @@ class _SavedWordsPageState extends State<SavedWordsPage> {
       appBar: AppBar(
         title: Text('Saved Suggestions'),
       ),
-      body: _buildSavedList(),
+      body: _buildSavedList(context),
     );
   }
 
-  Widget _buildSavedList() {
+  Widget _buildSavedList(BuildContext context) {
     return ListView.builder(
         padding: const EdgeInsets.all(16.0),
-        itemBuilder: (context, i) {
-          if (i >= _saved.length) return null;
+        itemBuilder: (context, index) {
+          if (index >= _saved.length) return null;
 
-          return Column(children: <Widget>[
-            ListTile(
-              title: Text(
-                _saved[i].asPascalCase,
-                style: _biggerFont,
-              ),
-              trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    setState(() {
-                      _saved.removeAt(i);
-                    });
-                  }),
-            ),
-            Divider()
-          ]);
+          return Dismissible(
+              key: Key(_saved[index].asPascalCase),
+              direction: DismissDirection.endToStart,
+              onDismissed: (direction) {
+                setState(() {
+                  showSnackBar(index, context);
+                  _saved.removeAt(index);
+                });
+              },
+              child: Column(children: <Widget>[
+                ListTile(
+                  title: Text(
+                    _saved[index].asPascalCase,
+                    style: _biggerFont,
+                  ),
+                  trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        setState(() {
+                          showSnackBar(index, context);
+                          _saved.removeAt(index);
+                        });
+                      }),
+                ),
+                Divider()
+              ]));
         });
+  }
+
+  showSnackBar(index, context) {
+    setState(() {
+      String word = _saved.elementAt(index).asPascalCase;
+      final snackBar =
+          SnackBar(content: Text('"$word" is removed successfully.'));
+      Scaffold.of(context).showSnackBar(snackBar);
+    });
   }
 }
