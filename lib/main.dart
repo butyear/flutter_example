@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:startup_namer/bottom_tab_page.dart';
 import 'package:startup_namer/random_word_page.dart';
 
 void main() => runApp(materialAppContainer());
@@ -62,7 +63,16 @@ class _AppPageState extends State<AppPage> {
                 });
               },
             ),
-            ListTile(),
+            ListTile(
+              title: Text('Bottom Tab'),
+              trailing: Icon(Icons.table_chart),
+              onTap: () {
+                Navigator.pop(context);
+                setState(() {
+                  _title = 'Bottom Tab Page';
+                  _drawerPageIndex = 2;
+                });
+              },),
             ListTile(),
             ListTile(),
           ],
@@ -75,8 +85,12 @@ class _AppPageState extends State<AppPage> {
   Widget drawerPageRouter() {
     if (_drawerPageIndex == 0) {
       return firstPage();
-    } else {
+    } else if (_drawerPageIndex == 1) {
       return RandomWords();
+    } else if (_drawerPageIndex == 2) {
+      return BottomTabPage();
+    } else {
+      return firstPage();
     }
   }
 

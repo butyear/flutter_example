@@ -15,12 +15,6 @@ class RandomWordsState extends State<RandomWords> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-//          appBar: AppBar(
-//            title: Text(_title),
-//            actions: <Widget>[
-//              IconButton(icon: Icon(Icons.list), onPressed: _pushSaved)
-//            ],
-//          ),
       body: _buildSuggestions(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red,
